@@ -27,8 +27,11 @@ module CarrierWave
           @path = path
           @base = base
 
+          @mogilefs_domain = @uploader.mogilefs_domain
+          @mogilefs_hosts = @uploader.mogilefs_hosts
+
           # Starting connection, using mogilefs-client
-          @mg = MogileFS::MogileFS.new(:domain => mogilefs_domain, :hosts => mogilefs_hosts)
+          @mg = MogileFS::MogileFS.new(:domain => @mogilefs_domain, :hosts => @mogilefs_hosts)
         end
 
         ##
