@@ -22,9 +22,9 @@ module CarrierWave
       
       class File
 
-        def initialize(uploader, base, path)
+        def initialize(uploader, base, key)
           @uploader = uploader
-          @path = path
+          @key = key
           @base = base
 
           @mogilefs_domain = @uploader.mogilefs_domain
@@ -35,51 +35,55 @@ module CarrierWave
         end
 
         ##
-        # Returns the current path/filename of the file on Cloud Files.
+        # Returns the key of the file in MogileFS
         #
         # === Returns
         #
-        # [String] A path
+        # [String] file's key
         #
         def path
-          @path
+          @key
         end
 
         ##
-        # Reads the contents of the file from Cloud Files
+        # Reads the contents of the file from MogileFS for given key
         #
         # === Returns
         #
-        # [String] contents of the file
+        # [String] file's content
         #
         def read
+          @mg.get_file_data(@key)
         end
 
         ##
-        # Remove the file from Cloud Files
+        # Remove the file from MogileFS for key
         #
         def delete
+          @mg.delete(@key)
         end
 
         ##
-        # Returns the url on the Cloud Files CDN.  Note that the parent container must be marked as
-        # public for this to work.
+        # Object has no URL in MogileFS, instead return key of the file.
         #
         # === Returns
         #
-        # [String] file's url
+        # [String] file's content
         #
         def url
+          @key
         end
 
         ##
-        # Writes the supplied data into the object on Cloud Files.
+        # Writes the supplied data into an object in MogileFS
+        # filename/path is used as key in MogileFS
         #
         # === Returns
         #
         # boolean
         #
-        def store(data,headers={})
+        def store(file)
+          @mg.store_file(@key, 'image', file.file)
         end
 
         private
@@ -87,7 +91,7 @@ module CarrierWave
       end
 
       ##
-      # Store the file on UpYun
+      # Store the file in MogileFS
       #
       # === Parameters
       #
@@ -95,30 +99,30 @@ module CarrierWave
       #
       # === Returns
       #
-      # [CarrierWave::Storage::UpYun::File] the stored file
+      # [CarrierWave::Storage::Mogilefs::File] the stored file
       #
       def store!(file)
         f = CarrierWave::Storage::Mogilefs::File.new(uploader, self, uploader.store_path)
-        f.store(file.read, file.content_type)
+        f.store(file)
         f
       end
 
       # Do something to retrieve the file
       #
-      # @param [String] identifier uniquely identifies the file
+      # @param [String] identifier uniquely identifies the file (key)
       #
-      # [identifier (String)] uniquely identifies the file
+      # [identifier (String)] uniquely identifies the file (key)
       #
       # === Returns
       #
-      # [CarrierWave::Storage::UpYun::File] the stored file
+      # [CarrierWave::Storage::Mogilefs::File] the stored file
       #
       def retrieve!(identifier)
-        CarrierWave::Storage::Mogilefs::File.new(uploader, self, uploader.store_path(identifier))
-        #CarrierWave::Storage::UpYun::File.new(uploader, self, uploader.store_path(identifier))
+        f = CarrierWave::Storage::Mogilefs::File.new(uploader, self, uploader.store_path(identifier))
+        f.read
+        f
       end
 
-
-    end # CloudFiles
+    end # Mogilefs
   end # Storage
 end # CarrierWave
