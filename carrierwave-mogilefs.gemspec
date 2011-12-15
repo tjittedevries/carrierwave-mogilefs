@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
   s.version     = Carrierwave::Mogilefs::VERSION
   s.authors     = ["Vrieskist"]
   s.email       = ["vrieskist@gmail.com"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.homepage    = "http://tjittedevries.com/"
+  s.summary     = %q{MogileFS support for Carrierwave}
+  s.description = %q{MogileFS support for Carrierwave}
 
   s.rubyforge_project = "carrierwave-mogilefs"
 
@@ -19,6 +19,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # specify any dependencies here; for example:
-  # s.add_development_dependency "rspec"
+  s.add_development_dependency "carrierwave"
   # s.add_runtime_dependency "rest-client"
 end
