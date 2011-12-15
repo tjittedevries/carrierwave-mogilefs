@@ -58,7 +58,7 @@ module CarrierWave
           begin
             @mg.get_file_data(@key)
           rescue => e
-            puts "error: #{e.inspect}"
+            puts "read error: #{e.inspect}, key: #{@key}"
             ''
           end
         end
@@ -70,7 +70,7 @@ module CarrierWave
           begin
             @mg.delete(@key)
           rescue => e
-            puts "error: #{e.inspect}"
+            puts "delete error: #{e.inspect}, key: #{@key}"
             ''
           end
         end
