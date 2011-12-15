@@ -10,16 +10,14 @@ end
 module CarrierWave
   module Storage
 
-    ##
+    #  CarrierWave.configure do |config|
+    #    config.mogilefs_domain = 'my.mogileserver.com'
+    #    config.mogilefs_hosts = [10.0.0.1:7001,10.0.0.2:7001]
+    #  end
     #
-    #     CarrierWave.configure do |config|
-    #       config.mogilefs_domain = 'my.mogileserver.com'
-    #       config.mogilefs_hosts = [10.0.0.1:7001,10.0.0.2:7001]
-    #     end
-    #
-    #     !! content class 'avatar' must exist in MogileFS !!
-    #     TODO: replace static class with configurable class per uploader
-    #
+    #  !! content class 'avatar' must exist in MogileFS !!
+    #  TODO: replace static class with configurable class per uploader
+
     class Mogilefs < Abstract
       
       class File
@@ -31,29 +29,21 @@ module CarrierWave
 
           @mogilefs_domain = @uploader.mogilefs_domain
           @mogilefs_hosts = @uploader.mogilefs_hosts
+          @mogilefs_folder = @uploader.mogilefs_folder
 
           # Starting connection, using mogilefs-client
           @mg = MogileFS::MogileFS.new(:domain => @mogilefs_domain, :hosts => @mogilefs_hosts)
         end
 
-        ##
-        # Returns the key of the file in MogileFS
-        #
-        # === Returns
-        #
-        # [String] file's key
-        #
+        # MogileFS supports no path, so key of the file is returned
+        # aliased in key()
+        # @return [String] key
         def path
           @key
         end
 
-        ##
-        # Reads the contents of the file from MogileFS for given key
-        #
-        # === Returns
-        #
-        # [String] file's content
-        #
+        # Reads the contents of the file from MogileFS for key
+        # @return [String] content of the file
         def read
           begin
             @mg.get_file_data(@key)
@@ -63,56 +53,42 @@ module CarrierWave
           end
         end
 
-        ##
         # Remove the file from MogileFS for key
-        #
+        # @return [Boolean]
         def delete
           begin
             @mg.delete(@key)
+            true
           rescue => e
             puts "delete error: #{e.inspect}, key: #{@key}"
-            ''
+            false
           end
         end
 
-        ##
-        # Object has no URL in MogileFS, instead return key of the file.
+        # Return a fake URL to file
+        # example: /uploads/user/avatars/1/image.png
+        # use /uploads/ to filter request to MogileFS backend
+        # use user/avatar/1/image.png as key to MogileFS backend
+        # 
+        # For Nginx use: http://www.grid.net.ru/nginx/mogilefs.en.html 
         #
-        # === Returns
-        #
-        # [String] file's content
-        #
+        # @return [String] url to file
         def url
-          @key
+          "/#{@mogilefs_folder}/#{@key}"
         end
 
-        ##
         # Writes the supplied data into an object in MogileFS
-        # filename/path is used as key in MogileFS
-        #
-        # === Returns
-        #
-        # boolean
-        #
+        # path is used as key in MogileFS
+        # @return [Boolean]
         def store(file)
           @mg.store_file(@key, 'avatar', file.file)
         end
 
-        private
-
       end
 
-      ##
       # Store the file in MogileFS
-      #
-      # === Parameters
-      #
-      # [file (CarrierWave::SanitizedFile)] the file to store
-      #
-      # === Returns
-      #
-      # [CarrierWave::Storage::Mogilefs::File] the stored file
-      #
+      # @param [CarrierWave::SanitizedFile] the file to store
+      # @return [CarrierWave::Storage::Mogilefs::File] the stored file
       def store!(file)
         f = CarrierWave::Storage::Mogilefs::File.new(uploader, self, uploader.store_path)
         f.store(file)
@@ -120,15 +96,8 @@ module CarrierWave
       end
 
       # Do something to retrieve the file
-      #
       # @param [String] identifier uniquely identifies the file (key)
-      #
-      # [identifier (String)] uniquely identifies the file (key)
-      #
-      # === Returns
-      #
-      # [CarrierWave::Storage::Mogilefs::File] the stored file
-      #
+      # @return [CarrierWave::Storage::Mogilefs::File] the stored file
       def retrieve!(identifier)
         f = CarrierWave::Storage::Mogilefs::File.new(uploader, self, uploader.store_path(identifier))
         f.read

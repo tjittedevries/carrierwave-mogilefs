@@ -5,6 +5,7 @@ module CarrierWave
       included do
         add_config :mogilefs_hosts
         add_config :mogilefs_domain
+        add_config :mogilefs_folder
       end
     end
     
