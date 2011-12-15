@@ -26,7 +26,7 @@ module CarrierWave
 
         def initialize(uploader, base, key)
           @uploader = uploader
-          @key = "/#{key}"
+          @key = key
           @base = base
 
           @mogilefs_domain = @uploader.mogilefs_domain
