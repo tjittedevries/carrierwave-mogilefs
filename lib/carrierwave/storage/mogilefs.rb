@@ -17,6 +17,8 @@ module CarrierWave
     #       config.mogilefs_hosts = [10.0.0.1:7001,10.0.0.2:7001]
     #     end
     #
+    #     !! content class 'avatar' must exist in MogileFS !!
+    #     TODO: replace static class with configurable class per uploader
     #
     class Mogilefs < Abstract
       
@@ -83,7 +85,7 @@ module CarrierWave
         # boolean
         #
         def store(file)
-          @mg.store_file(@key, 'image', file.file)
+          @mg.store_file(@key, 'avatar', file.file)
         end
 
         private
