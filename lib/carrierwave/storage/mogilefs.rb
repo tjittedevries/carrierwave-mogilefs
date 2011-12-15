@@ -55,14 +55,24 @@ module CarrierWave
         # [String] file's content
         #
         def read
-          @mg.get_file_data(@key)
+          begin
+            @mg.get_file_data(@key)
+          rescue => e
+            puts "error: #{e.inspect}"
+            ''
+          end
         end
 
         ##
         # Remove the file from MogileFS for key
         #
         def delete
-          @mg.delete(@key)
+          begin
+            @mg.delete(@key)
+          rescue => e
+            puts "error: #{e.inspect}"
+            ''
+          end
         end
 
         ##
