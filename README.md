@@ -20,6 +20,7 @@ CarrierWave.configure do |config|
   config.storage = :mogilefs
   config.mogilefs_hosts = ['10.0.0.1:7001', '10.0.0.2:7001']
   config.mogilefs_domain = "my.mogilefs.com"
+  config.mogilefs_class = "photo"
 end
 ```
 
