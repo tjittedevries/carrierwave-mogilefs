@@ -30,6 +30,7 @@ module CarrierWave
           @mogilefs_domain = @uploader.mogilefs_domain
           @mogilefs_hosts = @uploader.mogilefs_hosts
           @mogilefs_folder = @uploader.mogilefs_folder
+          @mogilefs_class = @uploader.mogilefs_class
 
           # Starting connection, using mogilefs-client
           @mg = MogileFS::MogileFS.new(:domain => @mogilefs_domain, :hosts => @mogilefs_hosts)
@@ -81,7 +82,7 @@ module CarrierWave
         # path is used as key in MogileFS
         # @return [Boolean]
         def store(file)
-          @mg.store_file(@key, 'avatar', file.file)
+          @mg.store_file(@key, @mogilefs_class, file.file)
         end
 
       end
