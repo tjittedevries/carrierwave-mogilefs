@@ -65,6 +65,10 @@ module CarrierWave
             false
           end
         end
+        
+        def content_type
+          ''
+        end
 
         # Return a fake URL to file
         # example: /uploads/user/avatars/1/image.png
