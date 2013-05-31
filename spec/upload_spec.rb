@@ -53,4 +53,14 @@ describe "Upload" do
       open(photo.image.small.url).should_not == nil
     end
   end
+  
+  context 'connection options' do
+    before(:each) do
+      @client = stub(:mogile_fs).as_null_object
+    end
+    it "should create a mogile fs client with the correct options" do
+      MogileFS::MogileFS.should_receive(:new).with(:domain => 'brinellmogile', :hosts => ['33.33.33.10:7001'], :timeout => 5).twice.and_return(@client)
+      Photo.create(:image => load_file("foo.jpg"))
+    end
+  end
 end
