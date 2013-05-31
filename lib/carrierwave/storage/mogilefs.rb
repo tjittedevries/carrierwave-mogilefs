@@ -13,6 +13,7 @@ module CarrierWave
     #  CarrierWave.configure do |config|
     #    config.mogilefs_domain = 'my.mogileserver.com'
     #    config.mogilefs_hosts = [10.0.0.1:7001,10.0.0.2:7001]
+    #    config.mogilefs_timout = 5
     #  end
     #
     #  !! content class 'avatar' must exist in MogileFS !!
@@ -31,9 +32,14 @@ module CarrierWave
           @mogilefs_hosts = @uploader.mogilefs_hosts
           @mogilefs_folder = @uploader.mogilefs_folder
           @mogilefs_class = @uploader.mogilefs_class
+          @mogilefs_timeout = @uploader.mogilefs_timeout
+          
+          connection_options = {:domain => @mogilefs_domain, :hosts => @mogilefs_hosts}
+          
+          connection_options[:timeout] = @mogilefs_timeout if @mogilefs_timeout
 
           # Starting connection, using mogilefs-client
-          @mg = MogileFS::MogileFS.new(:domain => @mogilefs_domain, :hosts => @mogilefs_hosts)
+          @mg = MogileFS::MogileFS.new(connection_options)
         end
 
         # MogileFS supports no path, so key of the file is returned

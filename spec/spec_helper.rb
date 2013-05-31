@@ -28,6 +28,7 @@ CarrierWave.configure do |config|
   config.storage = :mogilefs
   config.mogilefs_hosts = ['33.33.33.10:7001']
   config.mogilefs_domain = 'brinellmogile'
+  config.mogilefs_timeout = 5
 end
 
 def load_file(fname)

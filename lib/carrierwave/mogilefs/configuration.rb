@@ -7,6 +7,7 @@ module CarrierWave
         add_config :mogilefs_domain
         add_config :mogilefs_folder
         add_config :mogilefs_class
+        add_config :mogilefs_timeout
       end
     end
     
